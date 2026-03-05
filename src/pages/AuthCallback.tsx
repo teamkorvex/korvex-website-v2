@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export function AuthCallback() {
-  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,7 +40,7 @@ export function AuthCallback() {
 
         sessionStorage.removeItem('oauth_state');
 
-        // Custom domain safe redirect (Vercel compatible)
+        // Vercel + custom domain safe redirect
         window.location.replace(`${window.location.origin}/dashboard`);
 
       } catch (err) {
@@ -90,7 +88,7 @@ export function AuthCallback() {
           <p className="text-secondary-light mb-6">{error}</p>
 
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={() => (window.location.href = '/')}
             className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition hover:-translate-y-0.5"
           >
             Return Home
@@ -104,7 +102,6 @@ export function AuthCallback() {
     <div className="min-h-screen bg-dark flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin w-12 h-12 border-2 border-cobalt border-t-transparent rounded-full mx-auto mb-4" />
-
         <p className="text-secondary-light">
           Completing authentication...
         </p>
