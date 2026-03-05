@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function AuthCallback() {
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let mounted = true;
-
     const handleCallback = async () => {
       const urlParams = new URLSearchParams(window.location.search);
 
@@ -13,52 +13,43 @@ export function AuthCallback() {
       const state = urlParams.get('state');
       const storedState = sessionStorage.getItem('oauth_state');
 
-      if (!state || state !== storedState) {
-        if (mounted) setError('Invalid authentication state.');
+      // Verify state to prevent CSRF
+      if (state !== storedState) {
+        setError('Invalid state parameter. Please try again.');
         return;
       }
 
       if (!code) {
-        if (mounted) setError('No authorization code received.');
+        setError('No authorization code received.');
         return;
       }
 
       try {
-        const response = await fetch('/api/auth-callback', {
+        const response = await fetch('/.netlify/functions/auth-callback', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
+          body: JSON.stringify({ code }),
           credentials: 'include',
-          body: JSON.stringify({ code })
         });
 
         if (!response.ok) {
-          const data = await response.json().catch(() => ({}));
+          const data = await response.json();
           throw new Error(data.error || 'Authentication failed');
         }
 
         sessionStorage.removeItem('oauth_state');
 
-        // Vercel + custom domain safe redirect
-        window.location.replace(`${window.location.origin}/dashboard`);
+        // ✅ Redirect to dashboard (FIXED)
+        window.location.href = '/dashboard';
 
       } catch (err) {
-        if (mounted) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : 'Authentication failed'
-          );
-        }
+        setError(err instanceof Error ? err.message : 'Authentication failed');
       }
     };
 
     handleCallback();
-
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   if (error) {
@@ -70,7 +61,7 @@ export function AuthCallback() {
               className="w-10 h-10 text-red-400"
               fill="none"
               stroke="currentColor"
-              viewBox="0 0 24 24"
+              viewBox="0 24 24"
             >
               <path
                 strokeLinecap="round"
@@ -81,15 +72,15 @@ export function AuthCallback() {
             </svg>
           </div>
 
-          <h1 className="font-semibold text-2xl text-primary-light mb-4">
+          <h1 className="font-heading font-semibold text-2xl text-primary-light mb-4">
             Authentication Failed
           </h1>
 
           <p className="text-secondary-light mb-6">{error}</p>
 
           <button
-            onClick={() => (window.location.href = '/')}
-            className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition hover:-translate-y-0.5"
+            onClick={() => navigate('/')}
+            className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition-all hover:-translate-y-0.5"
           >
             Return Home
           </button>
@@ -101,10 +92,10 @@ export function AuthCallback() {
   return (
     <div className="min-h-screen bg-dark flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-spin w-12 h-12 border-2 border-cobalt border-t-transparent rounded-full mx-auto mb-4" />
-        <p className="text-secondary-light">
-          Completing authentication...
-        </p>
+        <div className="animate-pulse-soft">
+          <div className="w-12 h-12 border-2 border-cobalt border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        </div>
+        <p className="text-secondary-light">Completing authentication...</p>
       </div>
     </div>
   );
