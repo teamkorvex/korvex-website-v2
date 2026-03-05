@@ -27,7 +27,7 @@ export function HeroSection() {
     return () => ctx.revert();
   }, []);
 
-  const DASHBOARD_URL = 'https://discord.com/oauth2/authorize?client_id=1478785957569233028&response_type=code&redirect_uri=https%3A%2F%2Fvelu-coming-soon-lan-0r0u.bolt.host&scope=identify+connections+guilds.members.read+presences.read';
+  const DASHBOARD_URL = 'https://discord.com/oauth2/authorize?client_id=1478785957569233028&response_type=code&redirect_uri=https%3A%2F%2Fwww.korvex.xyz%2Fdashboard&scope=identify+email';
 
   return (
     <section
