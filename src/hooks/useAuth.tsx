@@ -4,8 +4,7 @@ import type { DiscordUser, AuthContextType } from '@/types/auth';
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const DISCORD_CLIENT_ID = '1478785957569233028';
-const REDIRECT_URI = typeof window !== 'undefined' 
-  ? `${window.location.origin}/auth/callback`
+const REDIRECT_URI = "https://www.korvex.xyz/auth/callback";
   : 'http://localhost:5173/auth/callback';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
