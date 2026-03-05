@@ -35,7 +35,7 @@ export function Footer() {
     return () => ctx.revert();
   }, []);
 
-  const DASHBOARD_URL = 'https://discord.com/oauth2/authorize?client_id=1478785957569233028&response_type=code&redirect_uri=https%3A%2F%2Fwww.korvex.xyz%2Fdashboard&scope=identify+email';
+  const DASHBOARD_URL = 'https://discord.com/oauth2/authorize?client_id=1478785957569233028&response_type=code&redirect_uri=https%3A%2F%2Fkorvex.xyz%2Fdashboard&scope=identify';
 
   return (
     <footer
