@@ -76,12 +76,16 @@ window.location.href =
             Authentication Failed
           </h1>
           <p className="text-secondary-light mb-6">{error}</p>
-          <button
-            onClick={() => navigate('/')}
-            className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition-all hover:-translate-y-0.5"
-          >
-            Return Home
-          </button>
+<button
+  onClick={() =>
+    window.location.assign(
+      "https://discord.com/oauth2/authorize?client_id=1478785957569233028&response_type=code&redirect_uri=https%3A%2F%2Fwww.korvex.xyz%2Fdashboard&scope=identify+email"
+    )
+  }
+  className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition"
+>
+  Login with Discord
+</button>
         </div>
       </div>
     );
