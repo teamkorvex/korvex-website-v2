@@ -2,8 +2,7 @@ import type { Handler, HandlerEvent, HandlerContext } from '@netlify/functions';
 
 const DISCORD_CLIENT_ID = '1478785957569233028';
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || '';
-const REDIRECT_URI = process.env.URL 
-  ? `${process.env.URL}/auth/callback`
+const REDIRECT_URI = "https://www.korvex.xyz/auth/callback";
   : 'http://localhost:5173/auth/callback';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-change-in-production';
