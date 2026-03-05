@@ -6,6 +6,8 @@ export function AuthCallback() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let mounted = true;
+
     const handleCallback = async () => {
       const urlParams = new URLSearchParams(window.location.search);
 
@@ -13,19 +15,17 @@ export function AuthCallback() {
       const state = urlParams.get('state');
       const storedState = sessionStorage.getItem('oauth_state');
 
-      // CSRF protection
       if (!state || state !== storedState) {
-        setError('Invalid authentication state.');
+        if (mounted) setError('Invalid authentication state.');
         return;
       }
 
       if (!code) {
-        setError('No authorization code received.');
+        if (mounted) setError('No authorization code received.');
         return;
       }
 
       try {
-        // Exchange OAuth code via Vercel serverless function
         const response = await fetch('/api/auth-callback', {
           method: 'POST',
           headers: {
@@ -36,27 +36,32 @@ export function AuthCallback() {
         });
 
         if (!response.ok) {
-          const data = await response.json();
+          const data = await response.json().catch(() => ({}));
           throw new Error(data.error || 'Authentication failed');
         }
 
-        // Clean state storage
         sessionStorage.removeItem('oauth_state');
 
-        // Redirect to dashboard after successful verification
-        navigate('/dashboard', { replace: true });
+        // Custom domain safe redirect (Vercel compatible)
+        window.location.replace(`${window.location.origin}/dashboard`);
 
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : 'Authentication failed'
-        );
+        if (mounted) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : 'Authentication failed'
+          );
+        }
       }
     };
 
     handleCallback();
-  }, [navigate]);
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   if (error) {
     return (
@@ -85,7 +90,7 @@ export function AuthCallback() {
           <p className="text-secondary-light mb-6">{error}</p>
 
           <button
-            onClick={() => navigate('/')}
+            onClick={() => window.location.href = '/'}
             className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition hover:-translate-y-0.5"
           >
             Return Home
