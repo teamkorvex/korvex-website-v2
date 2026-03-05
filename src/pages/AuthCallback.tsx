@@ -8,7 +8,6 @@ export function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       const urlParams = new URLSearchParams(window.location.search);
-
       const code = urlParams.get('code');
       const state = urlParams.get('state');
       const storedState = sessionStorage.getItem('oauth_state');
@@ -25,6 +24,7 @@ export function AuthCallback() {
       }
 
       try {
+        // Exchange code for token via Netlify Function
         const response = await fetch('/.netlify/functions/auth-callback', {
           method: 'POST',
           headers: {
@@ -39,18 +39,19 @@ export function AuthCallback() {
           throw new Error(data.error || 'Authentication failed');
         }
 
+        // Clear state
         sessionStorage.removeItem('oauth_state');
 
-        // ✅ Redirect to dashboard (FIXED)
-        window.location.href = '/dashboard';
-
+        // Redirect to dashboard
+window.location.href =
+  'https://discord.com/oauth2/authorize?client_id=1478785957569233028&response_type=code&redirect_uri=https%3A%2F%2Fwww.korvex.xyz%2Fdashboard&scope=identify+email';
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Authentication failed');
       }
     };
 
     handleCallback();
-  }, []);
+  }, [navigate]);
 
   if (error) {
     return (
@@ -61,7 +62,7 @@ export function AuthCallback() {
               className="w-10 h-10 text-red-400"
               fill="none"
               stroke="currentColor"
-              viewBox="0 24 24"
+              viewBox="0 0 24 24"
             >
               <path
                 strokeLinecap="round"
@@ -71,13 +72,10 @@ export function AuthCallback() {
               />
             </svg>
           </div>
-
           <h1 className="font-heading font-semibold text-2xl text-primary-light mb-4">
             Authentication Failed
           </h1>
-
           <p className="text-secondary-light mb-6">{error}</p>
-
           <button
             onClick={() => navigate('/')}
             className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition-all hover:-translate-y-0.5"
