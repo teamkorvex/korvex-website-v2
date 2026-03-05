@@ -13,11 +13,11 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     question: 'Is Korvex really free?',
-    answer: 'Yes, Korvex is 100% free. There are no premium tiers, no paywalls, and no hidden limits. All security features are available to every server at no cost.',
+    answer: 'Yes, Korvex is 100% free. There are no premium tiers, no paywalls, and no hidden limits. All blacklisting features are available to every server at no cost.',
   },
   {
     question: 'Can server admins edit the global blacklist?',
-    answer: 'No, individual server admins cannot directly edit the global blacklist. This prevents abuse and ensures the integrity of the system. Blacklist entries are managed through a structured appeals process and verified reports from trusted moderators.',
+    answer: 'No, individual server admins cannot directly edit the global blacklist. This prevents abuse and ensures the integrity of the system. Blacklist entries are managed through a structured appeals process and verified reports from trusted korvex adminstration team.',
   },
   {
     question: 'How does Korvex prevent abuse?',
@@ -30,6 +30,10 @@ const faqData: FAQItem[] = [
   {
     question: 'How do I configure alerts?',
     answer: 'After adding Korvex to your server, use the /setup command to configure your log channel. All ban actions and detections will be sent to that channel automatically. You can customize alert types and formats through the dashboard.',
+  },
+  {
+    question: 'Where is your support server?',
+    answer: 'You can join our official server here: https://discord.gg/nFab4cZKcG',
   },
 ];
 
