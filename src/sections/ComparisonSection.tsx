@@ -6,21 +6,21 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const otherBotsFeatures = [
-  'Expensive monthly subscriptions',
-  'Essential features locked behind paywall',
+  'Frustrating premium paywalls',
+  'Essential features locked premium',
   'Server and user limits on free tier',
   'Complex configuration required',
   'Bloated with unnecessary features',
   'Isolated protection per server',
-  'Limited or paid support',
+  'Limited or slow support',
 ];
 
 const korvexFeatures = [
   '100% free forever',
   'No premium features or paywalls',
-  'No hidden limits on servers or users',
-  'Simple 2-minute setup',
-  'Focused purely on security',
+  'No limits on servers or users',
+  'Simple drag & drop setup',
+  'Focused purely on blacklisting',
   'Community-driven protection',
   'Regular updates and support',
 ];
