@@ -8,13 +8,14 @@ export function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       const urlParams = new URLSearchParams(window.location.search);
+
       const code = urlParams.get('code');
       const state = urlParams.get('state');
       const storedState = sessionStorage.getItem('oauth_state');
 
-      // Verify state to prevent CSRF
-      if (state !== storedState) {
-        setError('Invalid state parameter. Please try again.');
+      // CSRF protection
+      if (!state || state !== storedState) {
+        setError('Invalid authentication state.');
         return;
       }
 
@@ -24,14 +25,14 @@ export function AuthCallback() {
       }
 
       try {
-        // Exchange code for token via Netlify Function
-        const response = await fetch('/.netlify/functions/auth-callback', {
+        // Exchange OAuth code via Vercel serverless function
+        const response = await fetch('/api/auth-callback', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ code }),
           credentials: 'include',
+          body: JSON.stringify({ code })
         });
 
         if (!response.ok) {
@@ -39,14 +40,18 @@ export function AuthCallback() {
           throw new Error(data.error || 'Authentication failed');
         }
 
-        // Clear state
+        // Clean state storage
         sessionStorage.removeItem('oauth_state');
 
-        // Redirect to dashboard
-window.location.href =
-  'https://discord.com/oauth2/authorize?client_id=1478785957569233028&response_type=code&redirect_uri=https%3A%2F%2Fwww.korvex.xyz%2Fdashboard&scope=identify+connections+guilds.members.read+presences.read+email';
+        // Redirect to dashboard after successful verification
+        navigate('/dashboard', { replace: true });
+
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Authentication failed');
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Authentication failed'
+        );
       }
     };
 
@@ -72,13 +77,16 @@ window.location.href =
               />
             </svg>
           </div>
-          <h1 className="font-heading font-semibold text-2xl text-primary-light mb-4">
+
+          <h1 className="font-semibold text-2xl text-primary-light mb-4">
             Authentication Failed
           </h1>
+
           <p className="text-secondary-light mb-6">{error}</p>
+
           <button
             onClick={() => navigate('/')}
-            className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition-all hover:-translate-y-0.5"
+            className="bg-cobalt hover:bg-cobalt-dark text-white px-6 py-3 rounded-lg transition hover:-translate-y-0.5"
           >
             Return Home
           </button>
@@ -90,10 +98,11 @@ window.location.href =
   return (
     <div className="min-h-screen bg-dark flex items-center justify-center">
       <div className="text-center">
-        <div className="animate-pulse-soft">
-          <div className="w-12 h-12 border-2 border-cobalt border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-        </div>
-        <p className="text-secondary-light">Completing authentication...</p>
+        <div className="animate-spin w-12 h-12 border-2 border-cobalt border-t-transparent rounded-full mx-auto mb-4" />
+
+        <p className="text-secondary-light">
+          Completing authentication...
+        </p>
       </div>
     </div>
   );
